@@ -1,63 +1,63 @@
-%  ¦¹µ{¦¡¥Î¨Ó¤ÀªReight-barªº°Ê§@
-%  ±`¼Æ: r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 th1 al be ga
-%  ÅÜ¼Æ: r1 th2 th3 th4 th5 th th7 th8 th9 th10 th11  (³æ¦ì cm)
+%  æ­¤ç¨‹å¼ç”¨ä¾†åˆ†æeight-barçš„å‹•ä½œ
+%  å¸¸æ•¸: r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 th1 al be ga
+%  è®Šæ•¸: r1 th2 th3 th4 th5 th th7 th8 th9 th10 th11  (å–®ä½ cm)
 %  equation :10
 %  dof : 1
 %  r2 is crank; thet2 can be turn 360 dergree
 clear all
 
-% ©·«×¨¤«×¤¬´«
+% å¼§åº¦è§’åº¦äº’æ›
 d2r = pi/180;
 r2d = 180/pi;
 
-%¿é¤J±`¼Æ
-r2 = input('½Ğ¿é¤J r2 ªø«× [23.5]:');
+%è¼¸å…¥å¸¸æ•¸
+r2 = input('è«‹è¼¸å…¥ r2 é•·åº¦ [23.5]:');
 if isempty(r2); r2 = 23.5; end
-r3 = input('½Ğ¿é¤J r3 ªø«× [135]:');
+r3 = input('è«‹è¼¸å…¥ r3 é•·åº¦ [135]:');
 if isempty(r3); r3 = 135; end
-r4 = input('½Ğ¿é¤J r4 ªø«× [30.5]:');
+r4 = input('è«‹è¼¸å…¥ r4 é•·åº¦ [30.5]:');
 if isempty(r4); r4 = 30.5; end
-r5 = input('½Ğ¿é¤J r5 ªø«× [95]:');
+r5 = input('è«‹è¼¸å…¥ r5 é•·åº¦ [95]:');
 if isempty(r5); r5 = 95; end
-r6 = input('½Ğ¿é¤J r6 ªø«× [90]:');
+r6 = input('è«‹è¼¸å…¥ r6 é•·åº¦ [90]:');
 if isempty(r6); r6 = 90; end
-r7 = input('½Ğ¿é¤J r7 ªø«× [18]:');
+r7 = input('è«‹è¼¸å…¥ r7 é•·åº¦ [18]:');
 if isempty(r7); r7 = 18; end
-r8 = input('½Ğ¿é¤J r8 ªø«× [10]:');
+r8 = input('è«‹è¼¸å…¥ r8 é•·åº¦ [10]:');
 if isempty(r8); r8 = 10; end
-r9 = input('½Ğ¿é¤J r9 ªø«× [80]:');
+r9 = input('è«‹è¼¸å…¥ r9 é•·åº¦ [80]:');
 if isempty(r9); r9 = 80; end
-r10 = input('½Ğ¿é¤J r10 ªø«× [74.5]:');
+r10 = input('è«‹è¼¸å…¥ r10 é•·åº¦ [74.5]:');
 if isempty(r10); r10 = 74.5; end
-r11 = input('½Ğ¿é¤J r11 ªø«× [73]:');
+r11 = input('è«‹è¼¸å…¥ r11 é•·åº¦ [73]:');
 if isempty(r11); r11 = 73; end
-theta1 = input('½Ğ¿é¤J theta1 ¨¤«× [0]:');
+theta1 = input('è«‹è¼¸å…¥ theta1 è§’åº¦ [0]:');
 if isempty(theta1); theta1 = 0 ; end
-alpha = input('½Ğ¿é¤J alpha ¨¤«× [0]:');
+alpha = input('è«‹è¼¸å…¥ alpha è§’åº¦ [0]:');
 if isempty(alpha); alpha = 0 ; end
-beta = input('½Ğ¿é¤J beta ¨¤«× [2]:');
+beta = input('è«‹è¼¸å…¥ beta è§’åº¦ [2]:');
 if isempty(beta); beta = 2 ; end
-gamme = input('½Ğ¿é¤J gamme ¨¤«× [7]:');
+gamme = input('è«‹è¼¸å…¥ gamme è§’åº¦ [7]:');
 if isempty(gamme); gamme = 7 ; end
 
-%¨¤«×´«©·«×
+%è§’åº¦æ›å¼§åº¦
 th1 = theta1*d2r;
 al = alpha*d2r;
 be = beta*d2r;
 ga = gamme*d2r;
 
-%¹w³]Âà¤@°é
-run = 'y';
+%é è¨­è½‰ä¸€åœˆ
+runAgain = 'y';   % 'run' is a built-in function; avoid shadowing it
 run2 = '-';
-nn=1; %theta2 ¨¤«×¶¡¹j
-while run == 'y'
+nn=1; %theta2 è§’åº¦é–“éš”
+while strcmpi(runAgain, 'y')
    
     theta2 = 0:nn:359;
     n = numel(theta2);
     th2 = theta2.*d2r;
     
-    %¶}©l­pºâ eightbar ÅÜ¼Æ
-    var = zeros(n,12);
+    %é–‹å§‹è¨ˆç®— eightbar è®Šæ•¸
+    sol = zeros(n,12);   % 'var' is a built-in function; avoid shadowing it
     X = zeros(1,n); Y = zeros(1,n);
     for i = 1:n
         %equation 1
@@ -68,10 +68,10 @@ while run == 'y'
         r1 = (-A+sig*sqrt((A^2)-4*B))/2 ;
         th3 = atan2(r1*sin(th1)+r4*sin(th4)-r2*sin(th2(i)),r1*cos(th1)+r4*cos(th4)-r2*cos(th2(i)));  
         th9 = th3 - al; th11 = th3 + ga;
-        var(i,1)=r1 ;var(i,2)=th2(i); var(i,3)=th3; var(i,4)=th4; var(i,9)=th9; var(i,11)=th11;
+        sol(i,1)=r1 ;sol(i,2)=th2(i); sol(i,3)=th3; sol(i,4)=th4; sol(i,9)=th9; sol(i,11)=th11;
         %EQUATION 2
         theta13 = 0; theta14 = theta13 - (90); th12 = th3+(180*d2r); th13 = theta13*d2r; th14 = theta14*d2r;
-        r12 = 55; r13 = (r1+6) ; r14 = r4+59;  var(i,12) = th12;
+        r12 = 55; r13 = (r1+6) ; r14 = r4+59;  sol(i,12) = th12;
         
         C1 = r12*cos(th12)+r13*cos(th13)+r14*cos(th14);
         C2 = r12*sin(th12)+r13*sin(th13)+r14*sin(th14);
@@ -79,11 +79,11 @@ while run == 'y'
         C4 = 4*C2*r10;
         C5 = (r5^2)-(C1^2)-(C2^2)-(r10^2)+2*C1*r10;
         sig = -1;
-        det = sqrt((C4^2)-4*C3*C5);
-        th10 = 2*atan2((-C4+sig*det),(2*C3));
+        disc = sqrt((C4^2)-4*C3*C5);
+        th10 = 2*atan2((-C4+sig*disc),(2*C3));
         th5 = atan2((C2-r10*sin(th10)),(C1-r10*cos(th10)));
         th6 = th10 + be;
-        var(i,5) = th5; var(i,10) = th10; var(i,6)= th6;
+        sol(i,5) = th5; sol(i,10) = th10; sol(i,6)= th6;
         
 %         %equation3
          r15 = 59.5; th15 = (86-180)*d2r;
@@ -96,7 +96,7 @@ while run == 'y'
 %         det = sqrt((C4^2)-4*C3*C5);
 %         th7 = 2*atan2((-C4+sig*det),(2*C3));
 %         th8 = atan2((C2-r7*sin(th7)),(C1-r7*cos(th7)));
-%         var(i,7)= th7; var(i,8)= th8;
+%         sol(i,7)= th7; sol(i,8)= th8;
         %equation 4
         C1 = (r1*cos(th1)+r4*cos(th4)+r12*cos(th12)+r6*cos(th6))-(r2*cos(th2(i))+r10*cos(th10)+r11*cos(th11));
         C2 = (r1*sin(th1)+r4*sin(th4)+r12*sin(th12)+r6*sin(th6))-(r2*sin(th2(i))+r10*sin(th10)+r11*sin(th11));
@@ -104,54 +104,52 @@ while run == 'y'
         C4 = 4*C2*r7;
         C5 = (r8^2)-(C1^2)-(C2^2)-(r7^2)+2*C1*r7;
         sig = -1;
-        det = sqrt((C4^2)-4*C3*C5);
-        th7 = 2*atan2((-C4+sig*det),(2*C3));
+        disc = sqrt((C4^2)-4*C3*C5);
+        th7 = 2*atan2((-C4+sig*disc),(2*C3));
         th8 = atan2((C2-r7*sin(th7)),(C1-r7*cos(th7)));
-        var(i,7)= th7; var(i,8)= th8;
+        sol(i,7)= th7; sol(i,8)= th8;
     end
-    %°Êµe
+    %å‹•ç•«
          
-    for i=1:1
-        for i=1:n
-            JOx = 0; JOy = 0;
-            JAx = r2*cos(var(i,2)); JAy = r2*sin(var(i,2));
-            JBx = r2*cos(var(i,2))+r3*cos(var(i,3)); JBy = r2*sin(var(i,2))+r3*sin(var(i,3));
-            JEx = JBx+r12*cos(var(i,12)); JEy = JBy+r12*sin(var(i,12));          
-            JDx = JEx-r10*cos(var(i,10)); JDy = JEy-r10*sin(var(i,10));
-            JCx = JDx-r5*cos(var(i,5)); JCy = JDy-r5*sin(var(i,5));
-            JFx = JDx+r6*cos(var(i,6)); JFy = JDy+r6*sin(var(i,6));
-            JHx = JAx+r11*cos(var(i,11)); JHy = JAy+r11*sin(var(i,11));
-            JGx = JHx+r7*cos(var(i,7)); JGy = JHy+r7*sin(var(i,7));
-            JPx = JHx+0.5*r7*cos(var(i,7)); JPy = JHy+0.5*r7*sin(var(i,7));
-            x1 = [JOx JAx JBx]; y1 = [JOy JAy JBy];
-            x2 = [JCx JDx JEx]; y2 = [JCy JDy JEy];
-            x3 = [JAx JHx JGx JFx JEx]; y3 = [JAy JHy JGy JFy JEy]; 
-            x4 = JPx; y4 = JPy;
-            X(i) = JPx; Y(i) = JPy;
-            h = plot(x1, y1,'b', x2, y2,'g', x3, y3,'g', x4, y4,'ro', 'erasemode', 'none');
-            axis equal
-            axis([-30,170,-40,70]);
-            drawnow
-        end
+    for i=1:n
+        JOx = 0; JOy = 0;
+        JAx = r2*cos(sol(i,2)); JAy = r2*sin(sol(i,2));
+        JBx = r2*cos(sol(i,2))+r3*cos(sol(i,3)); JBy = r2*sin(sol(i,2))+r3*sin(sol(i,3));
+        JEx = JBx+r12*cos(sol(i,12)); JEy = JBy+r12*sin(sol(i,12));          
+        JDx = JEx-r10*cos(sol(i,10)); JDy = JEy-r10*sin(sol(i,10));
+        JCx = JDx-r5*cos(sol(i,5)); JCy = JDy-r5*sin(sol(i,5));
+        JFx = JDx+r6*cos(sol(i,6)); JFy = JDy+r6*sin(sol(i,6));
+        JHx = JAx+r11*cos(sol(i,11)); JHy = JAy+r11*sin(sol(i,11));
+        JGx = JHx+r7*cos(sol(i,7)); JGy = JHy+r7*sin(sol(i,7));
+        JPx = JHx+0.5*r7*cos(sol(i,7)); JPy = JHy+0.5*r7*sin(sol(i,7));
+        x1 = [JOx JAx JBx]; y1 = [JOy JAy JBy];
+        x2 = [JCx JDx JEx]; y2 = [JCy JDy JEy];
+        x3 = [JAx JHx JGx JFx JEx]; y3 = [JAy JHy JGy JFy JEy]; 
+        x4 = JPx; y4 = JPy;
+        X(i) = JPx; Y(i) = JPy;
+        h = plot(x1, y1,'b', x2, y2,'g', x3, y3,'g', x4, y4,'ro');
+        axis equal
+        axis([-30,170,-40,70]);
+        drawnow
     end
     
-    % §PÂ_¬O§_­n¦A¬İ°Êµe
-    run = input('¬O§_­n¬O§_­n¦A¶]¤@¦¸°Êµe y/n ? [y]:','s');
-    if isempty(run); run = 'y'; end
+    % åˆ¤æ–·æ˜¯å¦è¦å†çœ‹å‹•ç•«
+    runAgain = input('æ˜¯å¦è¦å†è·‘ä¸€æ¬¡å‹•ç•« y/n ? [y]:','s');
+    if isempty(runAgain); runAgain = 'y'; end
     
-    if run ~= 'y'
+    if ~strcmpi(runAgain, 'y')
         break
     end
     
-    %§PÂ_¥[´î³t
-    run2 = input('¬O§_­n§ïÅÜ³t«× +/-/= [-]:','s');
+    %åˆ¤æ–·åŠ æ¸›é€Ÿ
+    run2 = input('æ˜¯å¦è¦æ”¹è®Šé€Ÿåº¦ +/-/= [-]:','s');
     if isempty(run2); run2 = '-'; end
     
-    if run2 == '-'
+    if strcmp(run2, '-')
         nn = nn/5;
-    elseif run2 == '+'
+    elseif strcmp(run2, '+')
         nn = nn*5;
-    elseif run2 == '='
+    elseif strcmp(run2, '=')
         continue
     else
         break
@@ -166,9 +164,9 @@ plot(X,Y)
 axis equal
 xlabel('X-axis'); ylabel('Y-axis');
 
-%§ä¥XX,Y³Ì¤j³Ì¤p­È
-theta = var(:,2:12).*r2d;
-E = zeros(1,10); %¬ö¿ı (Xmax, Xmin, Ymax, Ymin, Xd, Yd, X/Y, Rmax, Rmin, Rran )
+%æ‰¾å‡ºX,Yæœ€å¤§æœ€å°å€¼
+theta = sol(:,2:12).*r2d;
+E = zeros(1,10); %ç´€éŒ„ (Xmax, Xmin, Ymax, Ymin, Xd, Yd, X/Y, Rmax, Rmin, Rran )
 Xmax = max(X) , Xmin = min(X), Ymax = max(Y), Ymin = min(Y), Xd = Xmax-Xmin, Yd = Ymax-Ymin, XYratio = Xd/Yd, Rmax = max(theta(:,4)), Rmin = min(theta(:,4)), Rran = Rmax-Rmin
 
 E(1,:) = [Xmax, Xmin, Ymax, Ymin, Xd, Yd, XYratio, Rmax, Rmin, Rran]
