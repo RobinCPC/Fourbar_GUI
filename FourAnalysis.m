@@ -1,23 +1,23 @@
-%´Á¥½³ø§i ÆF±Ó«×¤ÀªR¥Î  by rb     06 6/11
-%6/13 ­×¥¿¤O¤ÀªR³¡¥÷ V1.1
-%6/15 ­×¥¿ Â\¨¤­È  V1.2
-%¥ıµ¹ªì©l­È
+%æœŸæœ«å ±å‘Š éˆæ•åº¦åˆ†æç”¨  by rb     06 6/11
+%6/13 ä¿®æ­£åŠ›åˆ†æéƒ¨ä»½ V1.1
+%6/15 ä¿®æ­£ æ“ºè§’å€¼  V1.2
+%å…ˆçµ¦åˆå§‹å€¼
 clear all
-r1 = input('½Ğ¿é¤J r1 ªø«× [73]:');
+r1 = input('è«‹è¼¸å…¥ r1 é•·åº¦ [73]:');
 if isempty(r1); r1 = 73; end
-r2 = input('½Ğ¿é¤J r2 ªø«× [16]:');
+r2 = input('è«‹è¼¸å…¥ r2 é•·åº¦ [16]:');
 if isempty(r2); r2 = 16; end
-r3 = input('½Ğ¿é¤J r3 ªø«× [60]:');
+r3 = input('è«‹è¼¸å…¥ r3 é•·åº¦ [60]:');
 if isempty(r3); r3 = 60; end
-r4 = input('½Ğ¿é¤J r4 ªø«× [58]:');
+r4 = input('è«‹è¼¸å…¥ r4 é•·åº¦ [58]:');
 if isempty(r4); r4 = 58; end
-theta1 = input('½Ğ¿é¤J theta1 ¨¤«× [35]:');
+theta1 = input('è«‹è¼¸å…¥ theta1 è§’åº¦ [35]:');
 if isempty(theta1); theta1 = 35 ; end
-beta = input('½Ğ¿é¤J beta ¨¤«× [0]:');
+beta = input('è«‹è¼¸å…¥ beta è§’åº¦ [0]:');
 if isempty(beta); beta = 0; end
-r6 = input('½Ğ¿é¤J r6 ªø«× [18]');
+r6 = input('è«‹è¼¸å…¥ r6 é•·åº¦ [18]');
 if isempty(r6); r6= 18; end
-mr = input('½Ğ¿é¤J momentun ­È(N*m) [3]');
+mr = input('è«‹è¼¸å…¥ momentun å€¼(N*m) [3]');
 if isempty(mr); mr= 3; end
 
 %set the direction of rotate
@@ -35,49 +35,35 @@ A = 2*r1*r4*cos(theta1*(pi/180))-2*rm*r4*cos(thetam.*(pi/180));
 B = 2*r1*r4*sin(theta1*(pi/180))-2*rm*r4*sin(thetam.*(pi/180));
 C = (r1^2)+(rm^2)+(r4^2)-(rj^2)-2*r1*rm*(cos(theta1*(pi/180))*cos(thetam.*(pi/180))+sin(theta1*(pi/180))*sin(thetam.*(pi/180)));
 
-det = sqrt((B.^2)+(A.^2)-(C.^2));
+disc2 = (B.^2)+(A.^2)-(C.^2);   % discriminant of the loop equation
+disc = sqrt(max(disc2, 0));     % 'disc' avoids shadowing the built-in det()
 
-if det > 0
-    fprintf('¦³¨â¬Û²§¹ê®Ú, ½Ğ¦Û¦æ§PÂ_­ş­Ó¸Ñ¬O§A­nªº^^||. \n');
-    theta41 = 2* atan2((-B+det),(C-A))*(180/pi);
-    for i = 1:n
-        if (theta41(i) > 0)
-            theta41(i) = theta41(i)-360;
-        end
-    end
-    theta42 = 2* atan2((-B-det),(C-A))*(180/pi);
-     for i = 1:n
-        if (theta42(i) > 0)
-            theta42(i) = theta42(i)-360;
-        end
-    end
-    thetaj1 = atan2((r1*sin(theta1*(pi/180))+r4*sin(theta41*(pi/180))-rm*sin(thetam.*(pi/180))),...
-        (r1*cos(theta1*(pi/180))+r4*cos(theta41*(pi/180))-rm*cos(thetam.*(pi/180))));
-    
-    thetaj2 = atan2((r1*sin(theta1*(pi/180))+r4*sin(theta42*(pi/180))-rm*sin(thetam.*(pi/180))),...
-        (r1*cos(theta1*(pi/180))+r4*cos(theta42*(pi/180))-rm*cos(thetam.*(pi/180))));
-    
-    theta31 = thetaj1*(180/pi);
-    
-    theta32 = thetaj2*(180/pi);
-    
-elseif det == 0
-    fprintf('­«®Ú\n');
-    theta4 = 2* atan2((-B),(C-A))*(180/pi);
-    
-    thetaj = atan2((r1*sin(theta1*(pi/180))+r4*sin(theta4*(pi/180))-rm*sin(thetam.*(pi/180))),...
-        (r1*cos(theta1*(pi/180))+r4*cos(theta4*(pi/180))-rm*cos(thetam.*(pi/180))));
-    
-    theta3 = thetaj*(180/pi);
-    
-else 
-    fprintf('µL¹ê¼Æ¸Ñ,½Ğ½T»{§Aªº­È¦³¨S¦³±a¿ù,¤£µM´N¬O§Aªº¥|³s±ìÂ_©ÔXD\n');
-    break
+if any(disc2 < 0)
+    % 'break' outside a loop is an error in modern MATLAB; use error() instead
+    error('ç„¡å¯¦æ•¸è§£,è«‹ç¢ºèªä½ çš„å€¼æœ‰æ²’æœ‰å¸¶éŒ¯,ä¸ç„¶å°±æ˜¯ä½ çš„å››é€£æ¡¿æ–·æ‹‰XD');
+elseif all(disc2 > 0)
+    fprintf('æœ‰å…©ç›¸ç•°å¯¦æ ¹, è«‹è‡ªè¡Œåˆ¤æ–·å“ªå€‹è§£æ˜¯ä½ è¦çš„^^||. \n');
+else
+    fprintf('é‡æ ¹\n');   % é‡æ ¹æ™‚å…©å€‹è§£ç›¸åŒ, ä¸‹é¢çš„å…¬å¼ä»ç„¶é©ç”¨
 end
 
-%¥ı§ä¥XPÂIªº­y¸ñ
-X = zeros(1,n); Y = zeros(1,n); %for Àx¦sPÂIªº¦ì²¾
-M = zeros(1,n); N = zeros(1,n); %for Àx¦sBÂIªº¦ì²¾
+theta41 = 2* atan2((-B+disc),(C-A))*(180/pi);
+theta41(theta41 > 0) = theta41(theta41 > 0)-360;
+theta42 = 2* atan2((-B-disc),(C-A))*(180/pi);
+theta42(theta42 > 0) = theta42(theta42 > 0)-360;
+
+thetaj1 = atan2((r1*sin(theta1*(pi/180))+r4*sin(theta41*(pi/180))-rm*sin(thetam.*(pi/180))),...
+    (r1*cos(theta1*(pi/180))+r4*cos(theta41*(pi/180))-rm*cos(thetam.*(pi/180))));
+
+thetaj2 = atan2((r1*sin(theta1*(pi/180))+r4*sin(theta42*(pi/180))-rm*sin(thetam.*(pi/180))),...
+    (r1*cos(theta1*(pi/180))+r4*cos(theta42*(pi/180))-rm*cos(thetam.*(pi/180))));
+
+theta31 = thetaj1*(180/pi);
+theta32 = thetaj2*(180/pi);
+
+%å…ˆæ‰¾å‡ºPé»çš„è»Œè·¡
+X = zeros(1,n); Y = zeros(1,n); %for å„²å­˜Pé»çš„ä½ç§»
+M = zeros(1,n); N = zeros(1,n); %for å„²å­˜Bé»çš„ä½ç§»
     for i = 1:n
     JBx = r1*cos(theta1*(pi/180))+r4*cos(theta41(i)*(pi/180)); JBy = r1*sin(theta1*(pi/180))+r4*sin(theta41(i)*(pi/180));
     theta5 =atan2((r1*sin(theta1*(pi/180))+r4*sin(theta41(i)*(pi/180))-r2*sin(theta2(i)*(pi/180))),(r1*cos(theta1*(pi/180))+r4*cos(theta41(i)*(pi/180))-r2*cos(theta2(i)*(pi/180))))*(180/pi);
@@ -86,7 +72,7 @@ M = zeros(1,n); N = zeros(1,n); %for Àx¦sBÂIªº¦ì²¾
         M(i)=JBx; N(i)=JBy;
         X(i)=JPx; Y(i)=JPy;
     end
-%¥[¤Wfour bar ªº¦ì¸mªº¹B°Ê¹Ï  ¥H¤Î¤W¤@ÂIªº¦ì²¾
+%åŠ ä¸Šfour bar çš„ä½ç½®çš„é‹å‹•åœ–  ä»¥åŠä¸Šä¸€é»çš„ä½ç§»
     Flen =zeros(1,n);
     F = zeros(1,n);
     for i = 1:n
@@ -103,7 +89,7 @@ M = zeros(1,n); N = zeros(1,n); %for Àx¦sBÂIªº¦ì²¾
 
             x2 = JPx ; y2 = JPy;
 
-        h = plot(x1, y1,x2,y2,'go', X, Y,'r:', M, N,'m:','erasemode', 'none');
+        h = plot(x1, y1,x2,y2,'go', X, Y,'r:', M, N,'m:');
 
         %set(h,'linewidth',3)
 
@@ -117,7 +103,7 @@ M = zeros(1,n); N = zeros(1,n); %for Àx¦sBÂIªº¦ì²¾
         % hold  
         drawnow
 
-        %¨D¤OÁu
+        %æ±‚åŠ›è‡‚
         dOP = sqrt((abs(JOx-JPx)^2)+(abs(JOy-JPy)^2));
         alpha = acos(((r2^2)+(dOP^2)-(r6^2))/(2*r2*dOP))*(180/pi);
        % if alpha < 90*(pi/180)
@@ -129,16 +115,16 @@ M = zeros(1,n); N = zeros(1,n); %for Àx¦sBÂIªº¦ì²¾
         Flen(i) = dOP*cos(gamme);
         F(i) = mr/Flen(i);
     end
-% plot ¤OÁu¤ñcrank¨¤«×
+% plot åŠ›è‡‚æ¯”crankè§’åº¦
 
 figure
 plot(theta2,Flen)
-xlabel('crank¨¤«×'); ylabel('¤OÁu');  
+xlabel('crankè§’åº¦'); ylabel('åŠ›è‡‚');  
 
-% plot  ¬I¤O¤ñcrank¨¤«×
+% plot  æ–½åŠ›æ¯”crankè§’åº¦
 figure
 plot(theta2 , F)
-xlabel('crank¨¤«×'); ylabel('³Ì¤p¬I¤O'); 
+xlabel('crankè§’åº¦'); ylabel('æœ€å°æ–½åŠ›'); 
 % picture of point p
 
 figure
@@ -146,8 +132,8 @@ plot(X,Y)
 axis equal
 xlabel('X-axis'); ylabel('Y-axis');
 
-%§ä¥XX,Y³Ì¤j³Ì¤p­È
-E = zeros(1,13); %¬ö¿ı (Xmax, Xmin, Ymax, Ymin, Xd, Yd, X/Y, Rmax, Rmin, Rran, th3max, th3min, th3ran)
+%æ‰¾å‡ºX,Yæœ€å¤§æœ€å°å€¼
+E = zeros(1,13); %ç´€éŒ„ (Xmax, Xmin, Ymax, Ymin, Xd, Yd, X/Y, Rmax, Rmin, Rran, th3max, th3min, th3ran)
 Xmax = max(X) ; Xmin = min(X); Ymax = max(Y); Ymin = min(Y); Xd = Xmax-Xmin; Yd = Ymax-Ymin; XYratio = Xd/Yd; Rmax = max(theta41); Rmin = min(theta41); Rran = Rmax-Rmin;
 th3max = max(theta31); th3min = min(theta31); th3ran = th3max - th3min;
 

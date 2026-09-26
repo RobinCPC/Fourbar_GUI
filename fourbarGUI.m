@@ -249,20 +249,17 @@ function AniPush_Callback(hObject, eventdata, handles)
 
 %below is the callback function of animate push
 %get all of value of text edit, and transfer to number.
-hfr = findobj('tag','Fralen'); r1 = str2double(get(hfr,'String'));
-% r1 = str2double(handles.Fralen.String)  test new my to program
-hcr = findobj('tag','Cralen'); r2 = str2double(get(hcr,'String'));
-hcl = findobj('tag','Coulen'); r3 = str2double(get(hcl,'String'));
-hrc = findobj('tag','Roclen'); r4 = str2double(get(hrc,'String'));
-hcour = findobj('tag','Courad'); r6 = str2double(get(hcour,'String'));
-hfa = findobj('tag','Fraang'); theta1 = str2double(get(hfa,'String'));
-hba = findobj('tag','Betang'); beta = str2double(get(hba,'String'));
-%get the value of assembly mode
-% if get(handles.pos) == 1
-%     handles.neg.value = 0
-% else
-%     handles.pos.value = 0
-% end
+r1 = str2double(get(handles.Fralen,'String'));
+r2 = str2double(get(handles.Cralen,'String'));
+r3 = str2double(get(handles.Coulen,'String'));
+r4 = str2double(get(handles.Roclen,'String'));
+r6 = str2double(get(handles.Courad,'String'));
+theta1 = str2double(get(handles.Fraang,'String'));
+beta = str2double(get(handles.Betang,'String'));
+if any(isnan([r1 r2 r3 r4 r6 theta1 beta]))
+    set(handles.text8,'String','Please enter numeric values!!');
+    return
+end
 
 %set the direction of rotate
 nn=1;
@@ -272,8 +269,7 @@ theta2=[a1 a2 a1 a2 a1 a2]; % three cycle
 n = numel(theta2);
 
 %decide assembly mode
-hpos = findobj('tag','pos'); 
-posvalue = get(hpos,'value');
+posvalue = get(handles.pos,'Value');
     
 % calculate loop equation
 
@@ -283,107 +279,61 @@ A = 2*r1*r4*cos(theta1*(pi/180))-2*rm*r4*cos(thetam.*(pi/180));
 B = 2*r1*r4*sin(theta1*(pi/180))-2*rm*r4*sin(thetam.*(pi/180));
 C = (r1^2)+(rm^2)+(r4^2)-(rj^2)-2*r1*rm*(cos(theta1*(pi/180))*cos(thetam.*(pi/180))+sin(theta1*(pi/180))*sin(thetam.*(pi/180)));
 
-det = sqrt((B.^2)+(A.^2)-(C.^2));
+disc2 = (B.^2)+(A.^2)-(C.^2);   % discriminant of the loop equation
+disc = sqrt(max(disc2, 0));     % 'disc' avoids shadowing the built-in det()
 
-if det > 0
-    htext8 = findobj('tag','text8'); set(htext8,'String','Two distinct real roots!!');
-    theta41 = 2* atan2((-B+det),(C-A))*(180/pi);
-    for i = 1:n
-        if (theta41(i) > 0)
-            theta41(i) = theta41(i)-360;
-        end
-    end
-    theta42 = 2* atan2((-B-det),(C-A))*(180/pi);
-     for i = 1:n
-        if (theta42(i) > 0)
-            theta42(i) = theta42(i)-360;
-        end
-    end
-    thetaj1 = atan2((r1*sin(theta1*(pi/180))+r4*sin(theta41*(pi/180))-rm*sin(thetam.*(pi/180))),...
-        (r1*cos(theta1*(pi/180))+r4*cos(theta41*(pi/180))-rm*cos(thetam.*(pi/180))));
-    
-    thetaj2 = atan2((r1*sin(theta1*(pi/180))+r4*sin(theta42*(pi/180))-rm*sin(thetam.*(pi/180))),...
-        (r1*cos(theta1*(pi/180))+r4*cos(theta42*(pi/180))-rm*cos(thetam.*(pi/180))));
-    
-    theta31 = thetaj1*(180/pi);
-    
-    theta32 = thetaj2*(180/pi);
-    
-elseif det == 0
-    htext8 = findobj('tag','text8'); set(htext8,'String','One real root!!');
-    theta4 = 2* atan2((-B),(C-A))*(180/pi);
-    
-    thetaj = atan2((r1*sin(theta1*(pi/180))+r4*sin(theta4*(pi/180))-rm*sin(thetam.*(pi/180))),...
-        (r1*cos(theta1*(pi/180))+r4*cos(theta4*(pi/180))-rm*cos(thetam.*(pi/180))));
-    
-    theta3 = thetaj*(180/pi);
-    
-else 
-    htext8 = findobj('tag','text8'); set(htext8,'String','No solution!!');
-%     break         can't use break in GUI
+if any(disc2 < 0)
+    set(handles.text8,'String','No solution!!');
+    return
+elseif all(disc2 > 0)
+    set(handles.text8,'String','Two distinct real roots!!');
+else
+    set(handles.text8,'String','One real root!!');
 end
 
-%•˝ß‰•XP¬I™∫≠y∏Ò
-
-X = zeros(1,n); Y = zeros(1,n); %for ¿x¶sP¬I™∫¶Ï≤æ
-M = zeros(1,n); N = zeros(1,n); %for ¿x¶sB¬I™∫¶Ï≤æ
-
+%pick the root of the selected assembly mode
 if posvalue == 1 %assembly mode is 1
-    for i = 1:n
-    JBx = r1*cos(theta1*(pi/180))+r4*cos(theta41(i)*(pi/180)); JBy = r1*sin(theta1*(pi/180))+r4*sin(theta41(i)*(pi/180));
-    theta5 =atan2((r1*sin(theta1*(pi/180))+r4*sin(theta41(i)*(pi/180))-r2*sin(theta2(i)*(pi/180))),(r1*cos(theta1*(pi/180))+r4*cos(theta41(i)*(pi/180))-r2*cos(theta2(i)*(pi/180))))*(180/pi);
-    theta6 = beta + theta5;
-    JPx = r2*cos(theta2(i)*(pi/180))+r6*cos(theta6*(pi/180)); JPy = r2*sin(theta2(i)*(pi/180))+r6*sin(theta6*(pi/180));
-        M(i)=JBx; N(i)=JBy;
-        X(i)=JPx; Y(i)=JPy;
-    end
-    %•[§Wfour bar ™∫¶Ï∏m™∫πB∞ πœ  •H§Œ§W§@¬I™∫¶Ï≤æ
-    for i = 1:n
-        JAx = r2*cos(theta2(i)*(pi/180)); JAy = r2*sin(theta2(i)*(pi/180));
-        JBx = r1*cos(theta1*(pi/180))+r4*cos(theta41(i)*(pi/180)); JBy = r1*sin(theta1*(pi/180))+r4*sin(theta41(i)*(pi/180));
-        JCx = r1*cos(theta1*(pi/180)); JCy = r1*sin(theta1*(pi/180));
-        JOx = 0; JOy = 0;
-        x1 = [JOx JAx JBx JCx]; y1 = [JOy JAy JBy JCy];
-
-        theta5 =atan2((r1*sin(theta1*(pi/180))+r4*sin(theta41(i)*(pi/180))-r2*sin(theta2(i)*(pi/180))),(r1*cos(theta1*(pi/180))+r4*cos(theta41(i)*(pi/180))-r2*cos(theta2(i)*(pi/180))))*(180/pi);
-        theta6 = beta + theta5;
-        JPx = r2*cos(theta2(i)*(pi/180))+r6*cos(theta6*(pi/180)); JPy = r2*sin(theta2(i)*(pi/180))+r6*sin(theta6*(pi/180));
-
-            x2 = JPx ; y2 = JPy;
-
-        h = plot(x1, y1,x2,y2,'go', X, Y,'r:', M, N,'m:','erasemode', 'none');
-        axis([-20,80,-20,60] , 'equal');
-        drawnow
-        
-    end
+    theta4 = 2* atan2((-B+disc),(C-A))*(180/pi);
 else %assembly mode is -1
-    for i = 1:n
-    JBx = r1*cos(theta1*(pi/180))+r4*cos(theta42(i)*(pi/180)); JBy = r1*sin(theta1*(pi/180))+r4*sin(theta42(i)*(pi/180));
-    theta5 =atan2((r1*sin(theta1*(pi/180))+r4*sin(theta42(i)*(pi/180))-r2*sin(theta2(i)*(pi/180))),(r1*cos(theta1*(pi/180))+r4*cos(theta42(i)*(pi/180))-r2*cos(theta2(i)*(pi/180))))*(180/pi);
+    theta4 = 2* atan2((-B-disc),(C-A))*(180/pi);
+end
+theta4(theta4 > 0) = theta4(theta4 > 0)-360;
+
+%ÂÖàÊâæÂá∫PÈªûÁöÑËªåË∑°
+
+X = zeros(1,n); Y = zeros(1,n); %for ÂÑ≤Â≠òPÈªûÁöÑ‰ΩçÁßª
+M = zeros(1,n); N = zeros(1,n); %for ÂÑ≤Â≠òBÈªûÁöÑ‰ΩçÁßª
+for i = 1:n
+    JBx = r1*cos(theta1*(pi/180))+r4*cos(theta4(i)*(pi/180)); JBy = r1*sin(theta1*(pi/180))+r4*sin(theta4(i)*(pi/180));
+    theta5 =atan2((r1*sin(theta1*(pi/180))+r4*sin(theta4(i)*(pi/180))-r2*sin(theta2(i)*(pi/180))),(r1*cos(theta1*(pi/180))+r4*cos(theta4(i)*(pi/180))-r2*cos(theta2(i)*(pi/180))))*(180/pi);
     theta6 = beta + theta5;
     JPx = r2*cos(theta2(i)*(pi/180))+r6*cos(theta6*(pi/180)); JPy = r2*sin(theta2(i)*(pi/180))+r6*sin(theta6*(pi/180));
-        M(i)=JBx; N(i)=JBy;
-        X(i)=JPx; Y(i)=JPy;
+    M(i)=JBx; N(i)=JBy;
+    X(i)=JPx; Y(i)=JPy;
+end
+
+%fixed axis limits that fit the whole motion
+JCx = r1*cos(theta1*(pi/180)); JCy = r1*sin(theta1*(pi/180));
+allx = [0 JCx -r2 r2 M X]; ally = [0 JCy -r2 r2 N Y];
+lim = [min(allx)-10, max(allx)+10, min(ally)-10, max(ally)+10];
+
+%Âä†‰∏äfour bar ÁöÑ‰ΩçÁΩÆÁöÑÈÅãÂãïÂúñ  ‰ª•Âèä‰∏ä‰∏ÄÈªûÁöÑ‰ΩçÁßª
+ax = handles.axes1;
+for i = 1:n
+    %stop quietly if the GUI is closed during the animation
+    if ~isgraphics(ax)
+        return
     end
-    %•[§Wfour bar ™∫¶Ï∏m™∫πB∞ πœ  •H§Œ§W§@¬I™∫¶Ï≤æ
-    for i = 1:n
-        JAx = r2*cos(theta2(i)*(pi/180)); JAy = r2*sin(theta2(i)*(pi/180));
-        JBx = r1*cos(theta1*(pi/180))+r4*cos(theta42(i)*(pi/180)); JBy = r1*sin(theta1*(pi/180))+r4*sin(theta42(i)*(pi/180));
-        JCx = r1*cos(theta1*(pi/180)); JCy = r1*sin(theta1*(pi/180));
-        JOx = 0; JOy = 0;
-        x1 = [JOx JAx JBx JCx]; y1 = [JOy JAy JBy JCy];
 
-        theta5 =atan2((r1*sin(theta1*(pi/180))+r4*sin(theta42(i)*(pi/180))-r2*sin(theta2(i)*(pi/180))),(r1*cos(theta1*(pi/180))+r4*cos(theta42(i)*(pi/180))-r2*cos(theta2(i)*(pi/180))))*(180/pi);
-        theta6 = beta + theta5;
-        JPx = r2*cos(theta2(i)*(pi/180))+r6*cos(theta6*(pi/180)); JPy = r2*sin(theta2(i)*(pi/180))+r6*sin(theta6*(pi/180));
+    JAx = r2*cos(theta2(i)*(pi/180)); JAy = r2*sin(theta2(i)*(pi/180));
+    JOx = 0; JOy = 0;
+    x1 = [JOx JAx M(i) JCx]; y1 = [JOy JAy N(i) JCy];
+    x2 = X(i); y2 = Y(i);
 
-            x2 = JPx ; y2 = JPy;
-
-        h = plot(x1, y1,x2,y2,'go', X, Y,'r:', M, N,'m:','erasemode', 'none');
-        axis([min(x1)-20,max(x1)+20,min(y1)-20,max(y1)+20],'equal');
-        drawnow
-        
-    end
+    plot(ax, x1, y1,x2,y2,'go', X, Y,'r:', M, N,'m:');
+    axis(ax, 'equal');
+    axis(ax, lim);
+    drawnow
 end
         
 
@@ -402,7 +352,7 @@ function InfPush_Callback(hObject, eventdata, handles)
 
 %show the info picture
 figure('Name','Fourbar Info','NumberTitle','off','Menubar','none');
-imshow('FourbarInfo.jpg');
+imshow(fullfile(fileparts(mfilename('fullpath')),'FourbarInfo.jpg'));
 
 
 
