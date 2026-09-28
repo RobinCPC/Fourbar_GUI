@@ -1,0 +1,73 @@
+#
+# WebAssembly build (GLFW + WebGL via Emscripten), based on the Dear ImGui
+# example_glfw_opengl3 Makefile.emscripten.
+# See https://emscripten.org/docs/getting_started/downloads.html for installation.
+#
+# Load emscripten's environment first (source <emsdk>/emsdk_env.sh), then:
+#   make -f Makefile.emscripten          produces web/index.html, web/index.js, web/index.wasm
+#   make -f Makefile.emscripten serve    builds and serves web/ on http://localhost:8000
+#
+# All three files in web/ are needed to run the app.
+
+CXX = em++
+WEB_DIR = web
+BUILD_DIR = build-web
+EXE = $(WEB_DIR)/index.html
+IMGUI_DIR = third_party/imgui
+IMPLOT_DIR = third_party/implot
+
+SOURCES = src/main.cpp src/app.cpp src/linkage.cpp
+SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp \
+           $(IMGUI_DIR)/imgui_widgets.cpp $(IMGUI_DIR)/imgui_demo.cpp
+SOURCES += $(IMGUI_DIR)/backends/imgui_impl_glfw.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
+SOURCES += $(IMPLOT_DIR)/implot.cpp $(IMPLOT_DIR)/implot_items.cpp
+OBJS = $(addprefix $(BUILD_DIR)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
+vpath %.cpp src $(IMGUI_DIR) $(IMGUI_DIR)/backends $(IMPLOT_DIR)
+
+CPPFLAGS = -std=c++17 -Isrc -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -I$(IMPLOT_DIR)
+CPPFLAGS += -I$(IMGUI_DIR)/examples/libs/emscripten
+LDFLAGS =
+EMS =
+
+##---------------------------------------------------------------------
+## EMSCRIPTEN OPTIONS
+##---------------------------------------------------------------------
+
+EMS += -s DISABLE_EXCEPTION_CATCHING=1 --use-port=contrib.glfw3
+LDFLAGS += -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s NO_EXIT_RUNTIME=0 -s ASSERTIONS=1
+
+# No file system needed: the app uses the default font and does not save imgui.ini
+LDFLAGS += -s NO_FILESYSTEM=1
+CPPFLAGS += -DIMGUI_DISABLE_FILE_FUNCTIONS
+
+##---------------------------------------------------------------------
+## FINAL BUILD FLAGS
+##---------------------------------------------------------------------
+
+CPPFLAGS += -Wall -Wformat -Os $(EMS)
+LDFLAGS += --shell-file web_shell.html
+LDFLAGS += $(EMS)
+
+##---------------------------------------------------------------------
+## BUILD RULES
+##---------------------------------------------------------------------
+
+all: $(EXE)
+	@echo Build complete for $(EXE)
+
+$(BUILD_DIR) $(WEB_DIR):
+	mkdir -p $@
+
+$(BUILD_DIR)/%.o: %.cpp | $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+
+$(EXE): $(OBJS) web_shell.html | $(WEB_DIR)
+	$(CXX) -o $@ $(OBJS) $(LDFLAGS)
+
+serve: all
+	python3 -m http.server -d $(WEB_DIR)
+
+clean:
+	rm -rf $(BUILD_DIR) $(WEB_DIR)
+
+.PHONY: all serve clean
