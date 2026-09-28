@@ -1,0 +1,67 @@
+name: C++ app
+
+on:
+  push:
+    branches: [master]
+    paths: ["cpp/**", ".github/workflows/cpp.yml", ".gitmodules"]
+  pull_request:
+    paths: ["cpp/**", ".github/workflows/cpp.yml", ".gitmodules"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    name: Tests and native build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cpp
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install GLFW
+        run: sudo apt-get update && sudo apt-get install -y libglfw3-dev
+      - name: Unit tests
+        run: make test
+      - name: Native build
+        run: make -j"$(nproc)"
+
+  web:
+    name: WebAssembly build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cpp
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 6.0.10
+      - name: Build
+        run: make -f Makefile.emscripten -j"$(nproc)"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: cpp/web
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    needs: [native, web]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
