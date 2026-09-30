@@ -1,5 +1,7 @@
 Fourbar_GUI
 ===========
+**Live demo:** https://robincpc.github.io/Fourbar_GUI/ (C++ / WebAssembly version, runs in the browser)
+
 Here are Matlab codes I wrote for my team project I participated at Mechanism Design class at National Taiwan University. The goal of this project is optimize the design of elliptical trainer, which is one of fitness equipment we can can see in gym.
 
 * FourAnalysis.m : for four-bar type elliptical trainer. [Four Bar](https://youtu.be/97GhadOHFXM)
@@ -19,4 +21,4 @@ Requirements
 
 C++ / WebAssembly version
 -------------------------
-`cpp/` contains a C++ port of all three tools (four-bar GUI, four-bar analysis, eight-bar analysis) with a Dear ImGui + ImPlot interface that runs natively or in the browser. See [cpp/README.md](cpp/README.md).
+`cpp/` contains a C++ port of all three tools (four-bar GUI, four-bar analysis, eight-bar analysis) with a Dear ImGui + ImPlot interface that runs natively or in the browser. Try it online at https://robincpc.github.io/Fourbar_GUI/, or see [cpp/README.md](cpp/README.md) to build it.
